@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Modal from "../modal/modal";
 
 interface Post {
     id: number;
@@ -14,6 +15,8 @@ interface Post {
 export default function Home() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
     useEffect(() => {
         setLoading(true);
@@ -50,7 +53,7 @@ export default function Home() {
                                     <img
                                         src={post.thumbnail}
                                         alt={post.title}
-                                        className="w-full h-48 object-fit mb-4 rounded-md"
+                                        className="w-full h-48 object-cover mb-4 rounded-md"
                                     />
                                     <h2 className="text-xl font-bold mb-2">{post.title}</h2>
                                     <p className="text-sm text-gray-600 mb-2">{post.description}</p>
@@ -58,7 +61,13 @@ export default function Home() {
                                     <p>Desconto: {post.discountPercentage}%</p>
                                     <p className="font-semibold pb-7">Avaliação: {post.rating}</p>
                                     <div className="mt-auto">
-                                        <button className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
+                                        <button
+                                            onClick={() => {
+                                                setSelectedPost(post);
+                                                setShowModal(true);
+                                            }}
+                                            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                                        >
                                             Comprar
                                         </button>
                                     </div>
@@ -68,6 +77,8 @@ export default function Home() {
                     </div>
                 </>
             )}
+
+            <Modal isOpen={showModal} onClose={() => setShowModal(false)} selectedPost={selectedPost} />
         </>
     );
 }
